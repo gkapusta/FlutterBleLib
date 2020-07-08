@@ -1,3 +1,15 @@
+## 2.2.6
+
+* Fixed scan quick failures not being reported to the listener (race condition in scanning_mixin.dart)
+
+## 2.2.5
+
+* add missing handling of destroyClient call on iOS
+* fix race condition in ConnectionStateStreamHandler (thanks, @cbreezier!)
+* fix issue with picking incorrect characteristic on Android when there are multiple characteristics with the same UUID on the peripheral
+* update pubspec format to properly display supported platforms
+* fix messages in IllegalStateExceptions on Android
+
 ## 2.2.4
 
 * Fix issue where `withResponse` argument was always true when writing to a characteristic on iOS

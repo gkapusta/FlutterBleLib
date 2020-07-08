@@ -1,11 +1,12 @@
 name: flutter_ble_lib
 description: FlutterBle Library is a flutter library that supports BLE operations. It uses MultiPlatformBleAdapter as a native backend..
-version: 2.2.4
-author: "Polidea <hello@polidea.com>"
+version: 2.2.5
 homepage: https://github.com/Polidea/FlutterBleLib
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
+  # Flutter versions prior to 1.10 did not support the flutter.plugin.platforms map.
+  flutter: ">=1.10.0 <2.0.0"
 
 dependencies:
   collection: ^1.14.11
@@ -30,8 +31,12 @@ flutter:
   # be modified. They are used by the tooling to maintain consistency when
   # adding or updating assets for this project.
   plugin:
-    androidPackage: com.polidea.flutter_ble_lib
-    pluginClass: FlutterBleLibPlugin
+    platforms:
+      android:
+        package: com.polidea.flutter_ble_lib
+        pluginClass: FlutterBleLibPlugin
+      ios:
+        pluginClass: FlutterBleLibPlugin
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg

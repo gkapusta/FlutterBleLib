@@ -1,5 +1,5 @@
 group 'com.polidea.flutter_ble_lib'
-version '2.2.4'
+version '2.2.5'
 
 buildscript {
     repositories {
@@ -36,5 +36,5 @@ android {
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'com.github.Polidea:MultiPlatformBleAdapter:0.1.5'
+    implementation 'com.github.Polidea:MultiPlatformBleAdapter:0.1.6'
 }

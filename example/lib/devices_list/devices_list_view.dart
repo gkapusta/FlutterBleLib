@@ -19,6 +19,7 @@ class DevicesListScreen extends StatefulWidget {
 class DeviceListScreenState extends State<DevicesListScreen> {
   DevicesBloc _devicesBloc;
   StreamSubscription _appStateSubscription;
+  bool _shouldRunOnResume = true;
 
   @override
   void didUpdateWidget(DevicesListScreen oldWidget) {
@@ -39,12 +40,12 @@ class DeviceListScreenState extends State<DevicesListScreen> {
       Fimber.d("navigate to details");
       _onPause();
       await Navigator.pushNamed(context, "/details");
-      _shouldRunOnResume = true;
+      setState(() {
+        _shouldRunOnResume = true;
+      });
       Fimber.d("back from details");
     });
   }
-
-  bool _shouldRunOnResume = true;
 
   @override
   void didChangeDependencies() {
