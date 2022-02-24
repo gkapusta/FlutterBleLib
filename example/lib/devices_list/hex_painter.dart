@@ -5,8 +5,8 @@ class HexPainter extends CustomPainter {
   final Color _backgroundColor;
 
   HexPainter({
-    Color backgroundColor,
-    Color foregroundColor,
+    Color? backgroundColor,
+    Color? foregroundColor,
   })  : _backgroundColor = backgroundColor ?? Colors.white,
         _foregroundColor = foregroundColor ?? Colors.black,
         super();

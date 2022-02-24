@@ -12,7 +12,7 @@ public interface ArgumentKey {
     String IS_AUTO_CONNECT = "isAutoConnect";
     String REQUEST_MTU = "requestMtu";
     String REFRESH_GATT = "refreshGatt";
-    String TIMEOUT_MILLIS = "timeoutMillis";
+    String TIMEOUT_MILLIS = "timeout";
     String EMIT_CURRENT_VALUE = "emitCurrentValue";
 
     String LOG_LEVEL = "logLevel";

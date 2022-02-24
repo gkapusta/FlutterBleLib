@@ -4,21 +4,56 @@ import 'dart:typed_data';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/src/_managers_for_classes.dart';
 import 'package:mockito/mockito.dart';
-import 'package:test/test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-import 'mock/mocks.dart';
+import './service_test.mocks.dart';
 import 'test_util/characteristic_generator.dart';
 import 'test_util/descriptor_generator.dart';
 
+@GenerateMocks([
+  Peripheral,
+  ManagerForService,
+  ManagerForDescriptor,
+  CharacteristicWithValue,
+  DescriptorWithValue
+])
 void main() {
-  Peripheral peripheral = PeripheralMock();
-  ManagerForService managerForService = ManagerForServiceMock();
-  ManagerForCharacteristic managerForCharacteristic =
-      ManagerForCharacteristicMock();
-  ManagerForDescriptor managerForDescriptor = ManagerForDescriptorMock();
-  CharacteristicGenerator characteristicGenerator =
+  final peripheral = MockPeripheral();
+  when(peripheral.toString()).thenReturn("mocked peripheral toString()");
+  when(peripheral.identifier).thenReturn("mocked peripheral id");
+  final managerForService = MockManagerForService();
+  when(
+    managerForService.readCharacteristicForService(any, any, any, any)
+  ).thenAnswer(
+    (_) async => MockCharacteristicWithValue()
+  );
+  when(
+    managerForService.readDescriptorForService(any, any, any, any)
+  ).thenAnswer(
+    (_) async => MockDescriptorWithValue()
+  );
+  when(
+    managerForService.writeCharacteristicForService(any, any, any, any, any, any)
+  ).thenAnswer(
+    (_) async => MockCharacteristicWithValue()
+  );
+  when(
+    managerForService.writeDescriptorForService(any, any, any, any, any)
+  ).thenAnswer(
+    (_) async => MockDescriptorWithValue()
+  );
+  when(
+    managerForService.monitorCharacteristicForService(any, any, any, any)
+  ).thenAnswer(
+    (_) => Stream.value(MockCharacteristicWithValue())
+  );
+  final managerForCharacteristic =
+      MockManagerForCharacteristic();
+  final managerForDescriptor = MockManagerForDescriptor();
+  final characteristicGenerator =
       CharacteristicGenerator(managerForCharacteristic);
-  DescriptorGenerator descriptorGenerator =
+  final descriptorGenerator =
       DescriptorGenerator(managerForDescriptor);
 
   Service service = Service.fromJson({
@@ -63,14 +98,16 @@ void main() {
         ]));
   });
 
-  test("descriptorsForCharacteristic returns characteristics provided by manager", () async {
+  test(
+      "descriptorsForCharacteristic returns characteristics provided by manager",
+      () async {
     //given
     when(managerForService.descriptorsForService(service, "123"))
         .thenAnswer((_) => Future.value([
-      createDescriptor(0),
-      createDescriptor(1),
-      createDescriptor(2),
-    ]));
+              createDescriptor(0),
+              createDescriptor(1),
+              createDescriptor(2),
+            ]));
 
     //when
     var descriptors = await service.descriptorsForCharacteristic("123");
@@ -88,12 +125,12 @@ void main() {
   test("readCharacteristic returns expected characteristic", () async {
     //given
     when(managerForService.readCharacteristicForService(
-            peripheral, service, "123", "456"))
+            peripheral, service, "123", "a456"))
         .thenAnswer((_) => Future.value(createCharacteristic(0)));
 
     //when
     var characteristic =
-        await service.readCharacteristic("123", transactionId: "456");
+        await service.readCharacteristic("123", transactionId: "a456");
 
     //then
     expect(characteristic, equals(createCharacteristic(0)));
@@ -101,12 +138,12 @@ void main() {
 
   test("readCharacteristic reads characteristic using manager", () {
     //when
-    service.readCharacteristic("123", transactionId: "456");
+    service.readCharacteristic("123", transactionId: "a456");
 
     //then
     verify(
       managerForService.readCharacteristicForService(
-          peripheral, service, "123", "456"),
+          peripheral, service, "123", "a456"),
     );
   });
 
@@ -126,24 +163,24 @@ void main() {
   test("readDescriptor returns expected descriptor", () async {
     //given
     when(managerForService.readDescriptorForService(
-            service, "123", "456", "789"))
+            service, "123", "456", "a789"))
         .thenAnswer((_) => Future.value(createDescriptor(0)));
 
     //when
     var characteristic =
-        await service.readDescriptor("123", "456", transactionId: "789");
+        await service.readDescriptor("123", "456", transactionId: "a789");
 
     //then
     expect(characteristic, equals(createDescriptor(0)));
   });
 
-  test("readDescriptor reads characteristic using manager", () {
+  test("readDescriptor reads descriptor using manager", () {
     //when
-    service.readDescriptor("123", "456", transactionId: "789");
+    service.readDescriptor("123", "456", transactionId: "a789");
 
     //then
     verify(
-      managerForService.readDescriptorForService(service, "123", "456", "789"),
+      managerForService.readDescriptorForService(service, "123", "456", "a789"),
     );
   });
 
@@ -163,7 +200,7 @@ void main() {
   test("writeCharacteristic returns expected characteristic", () async {
     //given
     when(managerForService.writeCharacteristicForService(peripheral, service,
-            "123", Uint8List.fromList([1, 2, 3, 4]), false, "456"))
+            "123", Uint8List.fromList([1, 2, 3, 4]), false, "a456"))
         .thenAnswer((_) => Future.value(createCharacteristic(0)));
 
     //when
@@ -171,7 +208,7 @@ void main() {
       "123",
       Uint8List.fromList([1, 2, 3, 4]),
       false,
-      transactionId: "456",
+      transactionId: "a456",
     );
 
     //then
@@ -181,12 +218,12 @@ void main() {
   test("writeCharacteristic writes characteristic using manager", () {
     //when
     service.writeCharacteristic("123", Uint8List.fromList([1, 2, 3, 4]), false,
-        transactionId: "456");
+        transactionId: "a456");
 
     //then
     verify(
       managerForService.writeCharacteristicForService(peripheral, service,
-          "123", Uint8List.fromList([1, 2, 3, 4]), false, "456"),
+          "123", Uint8List.fromList([1, 2, 3, 4]), false, "a456"),
     );
   });
 
@@ -207,27 +244,27 @@ void main() {
   test("writeDescriptor returns expected descriptor", () async {
     //given
     when(managerForService.writeDescriptorForService(
-            service, "123", "456", Uint8List.fromList([1, 2, 3, 4]), "789"))
+            service, "123", "456", Uint8List.fromList([1, 2, 3, 4]), "a789"))
         .thenAnswer((_) => Future.value(createDescriptor(0)));
 
     //when
-    var characteristic = await service.writeDescriptor(
+    var descriptor = await service.writeDescriptor(
         "123", "456", Uint8List.fromList([1, 2, 3, 4]),
-        transactionId: "789");
+        transactionId: "a789");
 
     //then
-    expect(characteristic, equals(createDescriptor(0)));
+    expect(descriptor, equals(createDescriptor(0)));
   });
 
   test("writeDescriptor writes descriptor using manager", () {
     //when
     service.writeDescriptor("123", "456", Uint8List.fromList([1, 2, 3, 4]),
-        transactionId: "789");
+        transactionId: "a789");
 
     //then
     verify(
       managerForService.writeDescriptorForService(
-          service, "123", "456", Uint8List.fromList([1, 2, 3, 4]), "789"),
+          service, "123", "456", Uint8List.fromList([1, 2, 3, 4]), "a789"),
     );
   });
 
@@ -249,12 +286,12 @@ void main() {
     //given
     var streamController = StreamController<CharacteristicWithValue>();
     when(managerForService.monitorCharacteristicForService(
-            peripheral, service, "123", "456"))
+            peripheral, service, "123", "a456"))
         .thenAnswer((_) => streamController.stream);
 
     //when
     var characteristicNotifications =
-        service.monitorCharacteristic("123", transactionId: "456");
+        service.monitorCharacteristic("123", transactionId: "a456");
     streamController.sink.add(createCharacteristic(0));
     streamController.sink.add(createCharacteristic(1));
     streamController.sink.add(createCharacteristic(2));
@@ -273,12 +310,12 @@ void main() {
 
   test("monitorCharacteristic monitors characteristic using manager", () {
     //when
-    service.monitorCharacteristic("123", transactionId: "456");
+    service.monitorCharacteristic("123", transactionId: "a456");
 
     //then
     verify(
       managerForService.monitorCharacteristicForService(
-          peripheral, service, "123", "456"),
+          peripheral, service, "123", "a456"),
     );
   });
 

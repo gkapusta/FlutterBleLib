@@ -10,7 +10,7 @@ NSString * const ARGUMENT_KEY_DEVICE_IDENTIFIER = @"deviceIdentifier";
 NSString * const ARGUMENT_KEY_IS_AUTO_CONNECT = @"isAutoConnect";
 NSString * const ARGUMENT_KEY_REQUEST_MTU = @"requestMtu";
 NSString * const ARGUMENT_KEY_REFRESH_GATT = @"refreshGatt";
-NSString * const ARGUMENT_KEY_TIMEOUT_MILLIS = @"timeoutMillis";
+NSString * const ARGUMENT_KEY_TIMEOUT_MILLIS = @"timeout";
 NSString * const ARGUMENT_KEY_EMIT_CURRENT_VALUE = @"emitCurrentValue";
 
 NSString * const ARGUMENT_KEY_LOG_LEVEL = @"logLevel";

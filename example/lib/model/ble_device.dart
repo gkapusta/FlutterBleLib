@@ -19,8 +19,6 @@ class BleDevice {
   @override
   bool operator ==(other) =>
       other is BleDevice &&
-      this.name != null &&
-      other.name != null &&
       compareAsciiLowerCase(this.name, other.name) == 0 &&
       this.id == other.id;
 
@@ -39,7 +37,7 @@ extension on ScanResult {
   DeviceCategory get category {
     if (name == "SensorTag") {
       return DeviceCategory.sensorTag;
-    } else if (name != null && name.startsWith("Hex")) {
+    } else if (name.startsWith("Hex")) {
       return DeviceCategory.hex;
     } else {
       return DeviceCategory.other;

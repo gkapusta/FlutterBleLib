@@ -66,7 +66,6 @@ String _createJsonScanResult({
   int txPowerLevel,
   List<String> solicitedServiceUuids,
 }) {
-
   String serializedManufacturerData;
   if (manufacturerData != null) {
     serializedManufacturerData = "\"${base64Encode(manufacturerData)}\"";

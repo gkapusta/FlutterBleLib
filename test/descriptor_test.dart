@@ -4,18 +4,26 @@ import 'dart:typed_data';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/src/_managers_for_classes.dart';
 import 'package:mockito/mockito.dart';
-import 'package:test/test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-import 'mock/mocks.dart';
 import 'test_util/descriptor_generator.dart';
 
+import './descriptor_test.mocks.dart';
+
+@GenerateMocks([ManagerForDescriptor, Characteristic])
 void main() {
-  ManagerForDescriptor managerForDescriptor = ManagerForDescriptorMock();
+  final managerForDescriptor = MockManagerForDescriptor();
+  when(
+    managerForDescriptor.readDescriptorForIdentifier(any, any)
+  ).thenAnswer(
+    (_) async => Uint8List.fromList([])
+  );
   DescriptorGenerator descriptorGenerator =
       DescriptorGenerator(managerForDescriptor);
 
   DescriptorWithValue createDescriptor(int seed) =>
-      descriptorGenerator.create(seed, CharacteristicMock());
+      descriptorGenerator.create(seed, MockCharacteristic());
 
   Descriptor descriptor = createDescriptor(123);
 

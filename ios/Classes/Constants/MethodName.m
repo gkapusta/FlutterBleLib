@@ -1,3 +1,4 @@
+NSString * const METHOD_NAME_IS_CLIENT_CREATED = @"isClientCreated";
 NSString * const METHOD_NAME_CREATE_CLIENT = @"createClient";
 NSString * const METHOD_NAME_DESTROY_CLIENT = @"destroyClient";
 

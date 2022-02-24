@@ -10,7 +10,7 @@ class Service extends InternalService {
   /// [Peripheral] containing this service.
   Peripheral peripheral;
 
-  ManagerForService _manager;
+  final ManagerForService _manager;
 
   /// The UUID of this service.
   String uuid;
@@ -18,12 +18,10 @@ class Service extends InternalService {
   Service.fromJson(
     Map<String, dynamic> jsonObject,
     Peripheral peripheral,
-    ManagerForService managerForService,
-  ) : super(jsonObject[_ServiceMetadata.id]) {
-    this.peripheral = peripheral;
-    uuid = jsonObject[_ServiceMetadata.uuid];
-    _manager = managerForService;
-  }
+    this._manager,
+  ) : peripheral = peripheral,
+      uuid = jsonObject[_ServiceMetadata.uuid],
+      super(jsonObject[_ServiceMetadata.id]);
 
   /// Returns a list of [Characteristic]s of this service.
   Future<List<Characteristic>> characteristics() =>
@@ -43,7 +41,7 @@ class Service extends InternalService {
     String characteristicUuid,
     Uint8List value,
     bool withResponse, {
-    String transactionId,
+    String? transactionId,
   }) =>
       _manager.writeCharacteristicForService(
           peripheral,
@@ -61,7 +59,7 @@ class Service extends InternalService {
   /// [Characteristic.isReadable] is `true` can be read.
   Future<CharacteristicWithValue> readCharacteristic(
     String characteristicUuid, {
-    String transactionId,
+    String? transactionId,
   }) =>
       _manager.readCharacteristicForService(
         peripheral,
@@ -80,7 +78,7 @@ class Service extends InternalService {
   /// monitored.
   Stream<CharacteristicWithValue> monitorCharacteristic(
     String characteristicUuid, {
-    String transactionId,
+    String? transactionId,
   }) =>
       _manager.monitorCharacteristicForService(
         peripheral,
@@ -108,7 +106,7 @@ class Service extends InternalService {
   Future<DescriptorWithValue> readDescriptor(
     String characteristicUuid,
     String descriptorUuid, {
-    String transactionId,
+    String? transactionId,
   }) =>
       _manager.readDescriptorForService(
         this,
@@ -125,7 +123,7 @@ class Service extends InternalService {
     String characteristicUuid,
     String descriptorUuid,
     Uint8List value, {
-    String transactionId,
+    String? transactionId,
   }) =>
       _manager.writeDescriptorForService(
         this,

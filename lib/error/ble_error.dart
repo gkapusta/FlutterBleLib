@@ -3,6 +3,7 @@ part of flutter_ble_lib;
 abstract class _BleErrorMetadata {
   static const String errorCode = "errorCode";
   static const String attErrorCode = "attErrorCode";
+  static const String iosErrorCode = "iosErrorCode";
   static const String androidErrorCode = "androidErrorCode";
   static const String reason = "reason";
   static const String deviceId = "deviceID";
@@ -13,23 +14,24 @@ abstract class _BleErrorMetadata {
 }
 
 class BleError {
-  BleErrorCode errorCode;
-  int attErrorCode;
-  int iosErrorCode;
-  int androidErrorCode;
-  String reason;
+  final BleErrorCode errorCode;
+  final int? attErrorCode;
+  final int? iosErrorCode;
+  final int? androidErrorCode;
+  final String reason;
 
-  String deviceID;
-  String serviceUuid;
-  String characteristicUuid;
-  String descriptorUuid;
-  String internalMessage;
+  final String? deviceID;
+  final String? serviceUuid;
+  final String? characteristicUuid;
+  final String? descriptorUuid;
+  final String? internalMessage;
 
   BleError.fromJson(Map<String, dynamic> json)
-      : errorCode = BleErrorCode(json[_BleErrorMetadata.errorCode]),
+      : errorCode = BleErrorCode(json[_BleErrorMetadata.errorCode] ?? 0),
         attErrorCode = json[_BleErrorMetadata.attErrorCode],
+        iosErrorCode = json[_BleErrorMetadata.iosErrorCode],
         androidErrorCode = json[_BleErrorMetadata.androidErrorCode],
-        reason = json[_BleErrorMetadata.reason],
+        reason = json[_BleErrorMetadata.reason] ?? "Reason not provided",
         deviceID = json[_BleErrorMetadata.deviceId],
         serviceUuid = json[_BleErrorMetadata.serviceUuid],
         characteristicUuid = json[_BleErrorMetadata.characteristicUuid],

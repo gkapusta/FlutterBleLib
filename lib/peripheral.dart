@@ -15,9 +15,9 @@ abstract class _PeripheralMetadata {
 /// [disconnectOrCancelConnection()] can be used if peripheral is not connected.
 class Peripheral {
   static const int NO_MTU_NEGOTIATION = 0;
-  ManagerForPeripheral _manager;
+  final ManagerForPeripheral _manager;
 
-  String name;
+  String? name;
   String identifier;
 
   Peripheral.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager)
@@ -35,24 +35,23 @@ class Peripheral {
   /// guaranteed to get it after connection is successful. (Android only)
   /// iOS by default requests about 186 MTU size and there's nothing anyone can
   /// do about it.
-  /// **NOTE**: if MTU has been request on this step, then there's no way
-  /// to retrieve it's value later on.
+  /// **NOTE**: if MTU has been requested on this step, then there's no way
+  /// to retrieve its value later on.
   ///
-  /// Optional [requestMtu] means that the MTU will not be negotiated
-  /// Passing `true` as [refreshGatt] leads reset services cache. This option may
+  /// Passing `true` as [refreshGatt] will reset services cache. This option may
   /// be useful when a peripheral's firmware was updated and it's
   /// services/characteristics were added/removed/altered. (Android only)
   ///
-  /// Optional [timeout] is used to define time after connection is
-  /// automatically timed out. In case of race condition were connection
+  /// Optional [timeout] is used to define delay after which the connection is
+  /// automatically cancelled. In case of race condition were connection
   /// is established right after timeout event, peripheral will be disconnected
-  /// immediately. Timeout may happen earlier then specified due to OS
+  /// immediately. Timeout may happen earlier than specified due to OS
   /// specific behavior.
   Future<void> connect(
           {bool isAutoConnect = false,
           int requestMtu = NO_MTU_NEGOTIATION,
           bool refreshGatt = false,
-          Duration timeout}) =>
+          Duration? timeout}) =>
       _manager.connectToPeripheral(identifier,
           isAutoConnect: isAutoConnect,
           requestMtu: requestMtu,
@@ -80,7 +79,7 @@ class Peripheral {
   /// Must be done prior to any other operation concerning those.
   ///
   /// Optional [transactionId] could be used to cancel operation.
-  Future<void> discoverAllServicesAndCharacteristics({String transactionId}) =>
+  Future<void> discoverAllServicesAndCharacteristics({String? transactionId}) =>
       _manager.discoverAllServicesAndCharacteristics(
           this, transactionId ?? TransactionIdGenerator.getNextId());
 
@@ -102,7 +101,7 @@ class Peripheral {
   /// Reads RSSI for the peripheral.
   ///
   /// Optional [transactionId] could be used to cancel operation.
-  Future<int> rssi({String transactionId}) =>
+  Future<int> rssi({String? transactionId}) =>
       _manager.rssi(this, transactionId ?? TransactionIdGenerator.getNextId());
 
   /// Requests new MTU value for current connection and return the negotiation
@@ -116,7 +115,7 @@ class Peripheral {
   /// Optional [transactionId] could be used to cancel operation.
   ///
   /// If MTU has been requested in [connect()] this method will end with [BleError].
-  Future<int> requestMtu(int mtu, {String transactionId}) =>
+  Future<int> requestMtu(int mtu, {String? transactionId}) =>
       _manager.requestMtu(
           this, mtu, transactionId ?? TransactionIdGenerator.getNextId());
 
@@ -129,7 +128,7 @@ class Peripheral {
   Future<CharacteristicWithValue> readCharacteristic(
     String serviceUuid,
     String characteristicUuid, {
-    String transactionId,
+    String? transactionId,
   }) =>
       _manager.readCharacteristicForDevice(
         this,
@@ -149,7 +148,7 @@ class Peripheral {
     String characteristicUuid,
     Uint8List value,
     bool withResponse, {
-    String transactionId,
+    String? transactionId,
   }) =>
       _manager.writeCharacteristicForDevice(
         this,
@@ -184,7 +183,7 @@ class Peripheral {
     String serviceUuid,
     String characteristicUuid,
     String descriptorUuid, {
-    String transactionId,
+    String? transactionId,
   }) =>
       _manager.readDescriptorForPeripheral(
         this,
@@ -206,7 +205,7 @@ class Peripheral {
     String characteristicUuid,
     String descriptorUuid,
     Uint8List value, {
-    String transactionId,
+    String? transactionId,
   }) =>
       _manager.writeDescriptorForPeripheral(
         this,
@@ -230,7 +229,7 @@ class Peripheral {
   Stream<CharacteristicWithValue> monitorCharacteristic(
     String serviceUuid,
     String characteristicUuid, {
-    String transactionId,
+    String? transactionId,
   }) =>
       _manager.monitorCharacteristicForDevice(
         this,

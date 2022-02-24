@@ -1,6 +1,7 @@
 package com.polidea.flutter_ble_lib.constant;
 
 public interface MethodName {
+    String IS_CLIENT_CREATED = "isClientCreated";
     String CREATE_CLIENT = "createClient";
     String DESTROY_CLIENT = "destroyClient";
 

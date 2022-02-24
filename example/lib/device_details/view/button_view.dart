@@ -1,12 +1,10 @@
-
 import 'package:flutter/material.dart';
 
 class ButtonView extends StatelessWidget {
-
   final String _text;
-  final Function action;
+  final void Function()? action;
 
-  ButtonView(this._text, { this.action });
+  ButtonView(this._text, {this.action});
 
   @override
   Widget build(BuildContext context) {

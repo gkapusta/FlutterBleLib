@@ -8,7 +8,7 @@ class DescriptorGenerator {
 
   DescriptorGenerator(this.managerForDescriptor);
 
-  Map<dynamic, dynamic> _createRawDescriptor(int seed) => <String, dynamic>{
+  Map<String, dynamic> _createRawDescriptor(int seed) => <String, dynamic>{
         "descriptorId": seed,
         "descriptorUuid": seed.toString(),
         "value": base64Encode([seed])

@@ -1,10 +1,10 @@
 name: flutter_ble_lib_example
 description: Demonstrates how to use the flutter_ble_lib plugin.
-version: 0.0.1+1
+version: 0.1.0+2
 publish_to: "none"
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: ">=2.12.0-0 <3.0.0"
 
 dependencies:
   flutter:
@@ -12,12 +12,12 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
+  cupertino_icons: ^1.0.2
 
-  rxdart: ^0.22.0
-  fimber: ^0.1.10
+  rxdart: ^0.26.0
+  fimber: ^0.6.1
 
-  permission_handler: ^4.2.0+hotfix.3
+  permission_handler: ^6.1.1
 
 dev_dependencies:
   flutter_test:

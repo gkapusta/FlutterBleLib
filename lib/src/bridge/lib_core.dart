@@ -1,7 +1,9 @@
 part of _internal;
 
 abstract class FlutterBLE {
-  InternalBleManager _manager;
+  final InternalBleManager _manager;
+
+  FlutterBLE._(this._manager);
 
   final MethodChannel _methodChannel =
       const MethodChannel(ChannelName.flutterBleLib);
@@ -29,37 +31,42 @@ class FlutterBleLib extends FlutterBLE
       const EventChannel(ChannelName.stateRestoreEvents)
           .receiveBroadcastStream();
 
-  void registerManager(InternalBleManager manager) {
-    _manager = manager;
-  }
+  FlutterBleLib(InternalBleManager manager) : super._(manager);
 
-  Future<List<Peripheral>> restoredState() => _restoreStateEvents
+  Future<List<Peripheral>> restoredState() async { 
+    final peripherals = await _restoreStateEvents
       .map(
         (jsonString) {
-          if (jsonString == null)
+          if (jsonString == null || 
+              jsonString is String == false) {
             return null;
-          else {
-            List<Map<String, dynamic>> restoredPeripheralsJson =
-                (jsonDecode(jsonString) as List<dynamic>).cast();
-            return restoredPeripheralsJson
-                .map((peripheralJson) =>
-                    Peripheral.fromJson(peripheralJson, _manager))
-                .toList();
           }
+          final restoredPeripheralsJson =
+              (jsonDecode(jsonString) as List<dynamic>)
+              .cast<Map<String, dynamic>>();
+          return restoredPeripheralsJson
+              .map((peripheralJson) =>
+                  Peripheral.fromJson(peripheralJson, _manager))
+              .toList();
+          
         },
       )
       .take(1)
       .single;
+    return peripherals ?? <Peripheral>[];
+  }
 
-  Future<void> createClient(String restoreStateIdentifier) async {
-    await _methodChannel.invokeMethod(MethodName.createClient, <String, String>{
+  Future<bool> isClientCreated() =>
+    _methodChannel.invokeMethod<bool>(MethodName.isClientCreated)
+      .then((value) => value!);
+
+  Future<void> createClient(String? restoreStateIdentifier) async {
+    await _methodChannel.invokeMethod(MethodName.createClient, <String, String?>{
       ArgumentName.restoreStateIdentifier: restoreStateIdentifier
     });
-    return;
   }
 
   Future<void> destroyClient() async {
     await _methodChannel.invokeMethod(MethodName.destroyClient);
-    return;
   }
 }

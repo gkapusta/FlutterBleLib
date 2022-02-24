@@ -20,10 +20,16 @@ mixin CharacteristicsMixin on FlutterBLE {
           )
           .catchError((errorJson) =>
               Future.error(BleError.fromJson(jsonDecode(errorJson.details))))
-          .then((rawJsonValue) =>
-              _parseCharacteristicWithValueWithTransactionIdResponse(
-                      peripheral, rawJsonValue)
-                  .value);
+          .then((rawValue) {
+            String rawJsonValue = "";
+            if (rawValue is String) {
+              rawJsonValue = rawValue;
+            }
+            return _parseCharacteristicWithValueWithTransactionIdResponse(
+              peripheral, 
+              rawJsonValue
+            ).value;
+          });
 
   Future<CharacteristicWithValue> readCharacteristicForDevice(
     Peripheral peripheral,
@@ -43,11 +49,16 @@ mixin CharacteristicsMixin on FlutterBLE {
           )
           .catchError((errorJson) =>
               Future.error(BleError.fromJson(jsonDecode(errorJson.details))))
-          .then(
-            (rawJsonValue) =>
-                _parseCharacteristicWithValueWithTransactionIdResponse(
-                    peripheral, rawJsonValue),
-          );
+          .then((rawValue) {
+            String rawJsonValue = "";
+            if (rawValue is String) {
+              rawJsonValue = rawValue;
+            }
+            return _parseCharacteristicWithValueWithTransactionIdResponse(
+              peripheral, 
+              rawJsonValue
+            );
+          });
 
   Future<CharacteristicWithValue> readCharacteristicForService(
     Peripheral peripheral,
@@ -66,11 +77,16 @@ mixin CharacteristicsMixin on FlutterBLE {
           )
           .catchError((errorJson) =>
               Future.error(BleError.fromJson(jsonDecode(errorJson.details))))
-          .then(
-            (rawJsonValue) =>
-                _parseCharacteristicWithValueWithTransactionIdResponse(
-                    peripheral, rawJsonValue),
-          );
+          .then((rawValue) {
+            String rawJsonValue = "";
+            if (rawValue is String) {
+              rawJsonValue = rawValue;
+            }
+            return _parseCharacteristicWithValueWithTransactionIdResponse(
+              peripheral, 
+              rawJsonValue
+            );
+          });
 
   Future<void> writeCharacteristicForIdentifier(
     Peripheral peripheral,
@@ -155,11 +171,17 @@ mixin CharacteristicsMixin on FlutterBLE {
           },
         );
 
-    bool Function(CharacteristicWithValueAndTransactionId)
-        characteristicFilter = (characteristic) =>
-            characteristic._id == characteristicIdentifier &&
-            equalsIgnoreAsciiCase(
-                transactionId ?? "", characteristic.transactionId ?? "");
+    bool characteristicFilter(
+      CharacteristicWithValueAndTransactionId characteristic,
+    ) {
+      if (characteristic._id != characteristicIdentifier) {
+        return false;
+      }
+      return equalsIgnoreAsciiCase(
+        transactionId,
+        characteristic._transactionId ?? "",
+      );
+    };
 
     return _createMonitoringStream(
       startMonitoring,
@@ -190,7 +212,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             equalsIgnoreAsciiCase(characteristicUuid, characteristic.uuid) &&
             equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid) &&
             equalsIgnoreAsciiCase(
-                transactionId ?? "", characteristic.transactionId ?? "");
+                transactionId, characteristic._transactionId ?? "");
 
     return _createMonitoringStream(
       startMonitoring,
@@ -220,7 +242,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             equalsIgnoreAsciiCase(characteristicUuid, characteristic.uuid) &&
             serviceIdentifier == characteristic.service._id &&
             equalsIgnoreAsciiCase(
-                transactionId ?? "", characteristic.transactionId ?? "");
+                transactionId, characteristic._transactionId ?? "");
 
     return _createMonitoringStream(
       startMonitoring,
@@ -230,24 +252,32 @@ mixin CharacteristicsMixin on FlutterBLE {
     );
   }
 
-  Stream<CharacteristicWithValue> _createMonitoringStream(
+  Stream<CharacteristicWithValueAndTransactionId> _createMonitoringStream(
     void Function() onListen,
     bool Function(CharacteristicWithValueAndTransactionId) filter,
     Peripheral peripheral,
     String transactionId,
   ) {
-    Stream<CharacteristicWithValue> stream = _characteristicsMonitoringEvents
-        .map(
-          (rawJsonValue) =>
-              _parseCharacteristicWithValueWithTransactionIdResponse(
-                  peripheral, rawJsonValue),
-        )
+    Stream<CharacteristicWithValueAndTransactionId> stream =
+      _characteristicsMonitoringEvents
+        .map((rawValue) {
+          String rawJsonValue = "";
+          if (rawValue is String) {
+            rawJsonValue = rawValue;
+          }
+          return _parseCharacteristicWithValueWithTransactionIdResponse(
+            peripheral, 
+            rawJsonValue
+          );
+        })
         .where(filter)
         .handleError((errorJson) =>
             _throwErrorIfMatchesWithTransactionId(errorJson, transactionId))
-        .transform(CancelOnErrorStreamTransformer());
+        .transform<CharacteristicWithValueAndTransactionId>(
+          CancelOnErrorStreamTransformer()
+        );
 
-    StreamController<CharacteristicWithValue> streamController =
+    StreamController<CharacteristicWithValueAndTransactionId> streamController =
         StreamController.broadcast(
       onListen: onListen,
       onCancel: () => cancelTransaction(transactionId),
@@ -255,14 +285,14 @@ mixin CharacteristicsMixin on FlutterBLE {
 
     streamController
         .addStream(stream, cancelOnError: true)
-        .then((_) => streamController?.close());
+        .then((_) => streamController.close());
 
     return streamController.stream;
   }
 
   CharacteristicWithValueAndTransactionId
       _parseCharacteristicWithValueWithTransactionIdResponse(
-          Peripheral peripheral, rawJsonValue) {
+          Peripheral peripheral, String rawJsonValue) {
     Map<String, dynamic> rootObject = jsonDecode(rawJsonValue);
     Service service = Service.fromJson(rootObject, peripheral, _manager);
 
@@ -281,17 +311,20 @@ mixin CharacteristicsMixin on FlutterBLE {
         rootObject["characteristic"], service, _manager);
   }
 
-  void _throwErrorIfMatchesWithTransactionId(errorJson, transactionId) {
-    var errorDetails = jsonDecode(errorJson.details);
-    if (transactionId == errorDetails["transactionId"])
-      throw BleError.fromJson(errorDetails);
-    else
+  void _throwErrorIfMatchesWithTransactionId(PlatformException errorJson, String transactionId) {
+    if (errorJson is PlatformException == false) {
       return;
+    }
+    final errorDetails = jsonDecode(errorJson.details);
+    if (transactionId != errorDetails["transactionId"]) {
+      return;
+    }
+    throw BleError.fromJson(errorDetails);
   }
 }
 
 class CharacteristicWithValueAndTransactionId extends CharacteristicWithValue {
-  String transactionId;
+  String? _transactionId;
 
   CharacteristicWithValueAndTransactionId.fromJson(
     Map<String, dynamic> jsonObject,
@@ -301,7 +334,7 @@ class CharacteristicWithValueAndTransactionId extends CharacteristicWithValue {
 
   CharacteristicWithValueAndTransactionId setTransactionId(
       String transactionId) {
-    this.transactionId = transactionId;
+    _transactionId = transactionId;
     return this;
   }
 
@@ -311,13 +344,13 @@ class CharacteristicWithValueAndTransactionId extends CharacteristicWithValue {
       super == other &&
           other is CharacteristicWithValueAndTransactionId &&
           runtimeType == other.runtimeType &&
-          transactionId == other.transactionId;
+          _transactionId == other._transactionId;
 
   @override
-  int get hashCode => super.hashCode ^ transactionId.hashCode;
+  int get hashCode => super.hashCode ^ _transactionId.hashCode;
 
   @override
   String toString() =>
       super.toString() +
-      ' CharacteristicWithValueAndTransactionId{transactionId: $transactionId}';
+      ' CharacteristicWithValueAndTransactionId{transactionId: $_transactionId}';
 }

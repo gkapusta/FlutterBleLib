@@ -7,10 +7,10 @@ import '_internal.dart';
 abstract class ManagerForPeripheral {
   Future<void> connectToPeripheral(
     String peripheralIdentifier, {
-    bool isAutoConnect,
-    int requestMtu,
-    bool refreshGatt,
-    Duration timeout,
+    required bool isAutoConnect,
+    required int requestMtu,
+    required bool refreshGatt,
+    Duration? timeout,
   });
 
   Future<bool> isPeripheralConnected(String peripheralIdentifier);
@@ -39,7 +39,7 @@ abstract class ManagerForPeripheral {
     String transactionId,
   );
 
-  Future<void> requestMtu(
+  Future<int> requestMtu(
     Peripheral peripheral,
     int mtu,
     String transactionId,

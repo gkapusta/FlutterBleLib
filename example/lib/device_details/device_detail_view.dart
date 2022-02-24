@@ -10,12 +10,11 @@ import 'package:flutter_ble_lib_example/device_details/view/manual_test_view.dar
 class DeviceDetailsView extends StatefulWidget {
   @override
   State<DeviceDetailsView> createState() => DeviceDetailsViewState();
-
 }
 
 class DeviceDetailsViewState extends State<DeviceDetailsView> {
-  DeviceDetailsBloc _deviceDetailsBloc;
-  StreamSubscription _appStateSubscription;
+  DeviceDetailsBloc? _deviceDetailsBloc;
+  StreamSubscription? _appStateSubscription;
 
   bool _shouldRunOnResume = true;
 
@@ -34,21 +33,21 @@ class DeviceDetailsViewState extends State<DeviceDetailsView> {
 
   void _onResume() {
     Fimber.d("onResume");
-    _deviceDetailsBloc.init();
+    _deviceDetailsBloc?.init();
     _appStateSubscription =
-        _deviceDetailsBloc.disconnectedDevice.listen((bleDevice) async {
-          Fimber.d("navigate to details");
-          _onPause();
-          Navigator.pop(context);
-          _shouldRunOnResume = true;
-          Fimber.d("back from details");
-        });
+        _deviceDetailsBloc?.disconnectedDevice.listen((bleDevice) async {
+      Fimber.d("navigate to details");
+      _onPause();
+      Navigator.pop(context);
+      _shouldRunOnResume = true;
+      Fimber.d("back from details");
+    });
   }
 
   void _onPause() {
     Fimber.d("onPause");
-    _appStateSubscription.cancel();
-    _deviceDetailsBloc.dispose();
+    _appStateSubscription?.cancel();
+    _deviceDetailsBloc?.dispose();
   }
 
   @override
@@ -60,9 +59,13 @@ class DeviceDetailsViewState extends State<DeviceDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceDetailsBloc = _deviceDetailsBloc;
     return WillPopScope(
       onWillPop: () {
-        return _deviceDetailsBloc.disconnect().then((_) {
+        if (deviceDetailsBloc == null) {
+          return Future<bool>.value(true);
+        }
+        return deviceDetailsBloc.disconnect().then((_) {
           return false;
         });
       },
@@ -74,15 +77,23 @@ class DeviceDetailsViewState extends State<DeviceDetailsView> {
               title: Text('Device Details'),
               bottom: TabBar(
                 tabs: [
-                  Tab(icon: Icon(Icons.autorenew), text: "Automatic",),
-                  Tab(icon: Icon(Icons.settings), text: "Manual",),
+                  Tab(
+                    icon: Icon(Icons.autorenew),
+                    text: "Automatic",
+                  ),
+                  Tab(
+                    icon: Icon(Icons.settings),
+                    text: "Manual",
+                  ),
                 ],
               ),
             ),
             body: TabBarView(
               children: <Widget>[
-                AutoTestView(_deviceDetailsBloc),
-                ManualTestView(_deviceDetailsBloc),
+                if (deviceDetailsBloc != null)
+                  AutoTestView(deviceDetailsBloc),
+                if (deviceDetailsBloc != null)
+                  ManualTestView(deviceDetailsBloc),
               ],
             )),
       ),

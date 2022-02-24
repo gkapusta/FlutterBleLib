@@ -6,7 +6,7 @@ class PeripheralTestOperations {
   final Peripheral peripheral;
   final Logger log;
   final Logger logError;
-  StreamSubscription monitoringStreamSubscription;
+  StreamSubscription<double>? _monitoringStreamSubscription;
   final BleManager bleManager;
 
   PeripheralTestOperations(
@@ -60,9 +60,9 @@ class PeripheralTestOperations {
             log("Found characteristic \n ${characteristic.uuid}"));
 
         //------------ descriptors
-        List<Descriptor> descriptors;
+        List<Descriptor>? descriptors;
 
-        var printDescriptors = () => descriptors.forEach((descriptor) {
+        var printDescriptors = () => descriptors?.forEach((descriptor) {
               log("Descriptor: ${descriptor.uuid}");
             });
 
@@ -711,8 +711,8 @@ class PeripheralTestOperations {
 
   void _startMonitoringTemperature(
       Stream<Uint8List> characteristicUpdates, Function log) async {
-    await monitoringStreamSubscription?.cancel();
-    monitoringStreamSubscription =
+    await _monitoringStreamSubscription?.cancel();
+    _monitoringStreamSubscription =
         characteristicUpdates.map(_convertToTemperature).listen(
       (temperature) {
         log("Temperature updated: ${temperature}C");

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_lib_example/device_details/device_details_bloc.dart';
 import 'package:flutter_ble_lib_example/device_details/view/button_view.dart';
@@ -173,8 +172,10 @@ class ManualTestView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonView("Monitor temp", action: _monitorCharacteristicForPeripheral),
-              ButtonView("Turn on temp", action: _writeCharacteristicForPeripheral),
+              ButtonView("Monitor temp",
+                  action: _monitorCharacteristicForPeripheral),
+              ButtonView("Turn on temp",
+                  action: _writeCharacteristicForPeripheral),
               ButtonView("Read temp", action: _readCharacteristicForPeripheral),
             ],
           ),

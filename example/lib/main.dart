@@ -14,21 +14,21 @@ void main() {
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'FlutterBleLib example',
-        theme: new ThemeData(
-          primaryColor: new Color(0xFF0A3D91),
-          accentColor: new Color(0xFFCC0000),
-        ),
-        initialRoute: "/",
-        routes: <String, WidgetBuilder>{
-          "/": (context) => DevicesBlocProvider(child: DevicesListScreen()),
-          "/details": (context) => DeviceDetailsBlocProvider(child: DeviceDetailsView()),
-        },
-        navigatorObservers: [routeObserver],
-      );
+      title: 'FlutterBleLib example',
+      theme: new ThemeData(
+        primaryColor: new Color(0xFF0A3D91),
+        accentColor: new Color(0xFFCC0000),
+      ),
+      initialRoute: "/",
+      routes: <String, WidgetBuilder>{
+        "/": (context) => DevicesBlocProvider(child: DevicesListScreen()),
+        "/details": (context) =>
+            DeviceDetailsBlocProvider(child: DeviceDetailsView()),
+      },
+      navigatorObservers: [routeObserver],
+    );
   }
 }

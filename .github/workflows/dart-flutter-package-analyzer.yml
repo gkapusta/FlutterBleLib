@@ -1,0 +1,37 @@
+name: Dart/Flutter Package Analyzer
+on: [push, pull_request]
+
+jobs:
+
+  package-analysis:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: axel-op/dart-package-analyzer@v3
+        # set an id for the current step
+        id: analysis
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      # You can then use this id to retrieve the outputs in the next steps.
+      # The following step shows how to exit the workflow with an error if the total score in percentage is below 50:
+      - name: Check scores
+        env:
+          # NB: "analysis" is the id set above. Replace it with the one you used if different.
+          TOTAL: ${{ steps.analysis.outputs.total }}
+          TOTAL_MAX: ${{ steps.analysis.outputs.total_max }}
+          ANALYSIS: ${{ steps.analysis.outputs.analysis }}
+          ANALYSIS_MAX: ${{ steps.analysis.outputs.analysis_max }}
+        run: |
+          if (( $ANALYSIS < $ANALYSIS_MAX ))
+          then
+            echo Unacceptable analysis score! Needs to be maxed out!
+            exit 1
+          elif (( $TOTAL < ($TOTAL_MAX - 10) ))
+          then
+            echo Unacceptable total score! Check dependencies and other factors!
+            exit 2
+          fi

@@ -1,8 +1,6 @@
 part of flutter_ble_lib;
 
 abstract class _ScanResultMetadata {
-  static const String id = "id";
-  static const String name = "name";
   static const String rssi = "rssi";
   static const String manufacturerData = "manufacturerData";
   static const String serviceData = "serviceData";
@@ -16,49 +14,65 @@ abstract class _ScanResultMetadata {
 
 /// A scan result emitted by the scanning operation, containing [Peripheral] and [AdvertisementData].
 class ScanResult {
-  Peripheral peripheral;
+  final Peripheral peripheral;
 
   /// Signal strength of the peripheral in dBm.
-  int rssi;
+  final int rssi;
 
   /// An indicator whether the peripheral is connectable (iOS only).
-  bool isConnectable;
+  final bool? isConnectable;
 
   /// A list of UUIDs found in the overflow area of the advertisement data (iOS only).
-  List<String> overflowServiceUuids;
+  final List<String> overflowServiceUuids;
 
   /// A packet of data advertised by the peripheral.
-  AdvertisementData advertisementData;
+  final AdvertisementData advertisementData;
+  
+  ScanResult._(
+    this.peripheral, 
+    this.rssi,
+    this.advertisementData,
+    {this.isConnectable, 
+    List<String>? overflowServiceUuids, 
+  }) : overflowServiceUuids = overflowServiceUuids ?? <String>[];
 
-  ScanResult.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager)
-      : peripheral = Peripheral.fromJson(json, manager),
-        rssi = json[_ScanResultMetadata.rssi],
-        isConnectable = json[_ScanResultMetadata.isConnectable],
-        overflowServiceUuids = json[_ScanResultMetadata.overflowServiceUuids],
-        advertisementData = AdvertisementData._fromJson(json);
+
+  factory ScanResult.fromJson(
+    Map<String, dynamic?> json, 
+    ManagerForPeripheral manager
+  ) {
+    assert(json[_ScanResultMetadata.rssi] is int);
+    return ScanResult._(
+      Peripheral.fromJson(json, manager), 
+      json[_ScanResultMetadata.rssi],
+      AdvertisementData._fromJson(json),
+      isConnectable: json[_ScanResultMetadata.isConnectable],
+      overflowServiceUuids: json[_ScanResultMetadata.overflowServiceUuids]
+    );
+  }
 }
 
 /// Data advertised by the [Peripheral]: power level, local name,
 /// manufacturer's data, advertised [Service]s
 class AdvertisementData {
   /// The manufacturer data of the peripheral.
-  Uint8List manufacturerData;
+  final Uint8List? manufacturerData;
 
   /// A dictionary that contains service-specific advertisement data.
-  Map<String, Uint8List> serviceData;
+  final Map<String, Uint8List>? serviceData;
 
   /// A list of service UUIDs.
-  List<String> serviceUuids;
+  final List<String>? serviceUuids;
 
   /// The local name of the [Peripheral]. Might be different than
   /// [Peripheral.name].
-  String localName;
+  final String? localName;
 
   /// The transmit power of the peripheral.
-  int txPowerLevel;
+  final int? txPowerLevel;
 
   /// A list of solicited service UUIDs.
-  List<String> solicitedServiceUuids;
+  final List<String>? solicitedServiceUuids;
 
   AdvertisementData._fromJson(Map<String, dynamic> json)
       : manufacturerData =
@@ -69,23 +83,26 @@ class AdvertisementData {
             _mapToListOfStringsOrNull(json[_ScanResultMetadata.serviceUuids]),
         localName = json[_ScanResultMetadata.localName],
         txPowerLevel = json[_ScanResultMetadata.txPowerLevel],
-        solicitedServiceUuids = _mapToListOfStringsOrNull(
-            json[_ScanResultMetadata.solicitedServiceUuids]);
+        solicitedServiceUuids =
+          _mapToListOfStringsOrNull(
+            json[_ScanResultMetadata.solicitedServiceUuids]
+          );
 
-  static Map<String, Uint8List> _getServiceDataOrNull(
-      Map<String, dynamic> serviceData) {
+  static Map<String, Uint8List>? _getServiceDataOrNull(
+      Map<String, dynamic>? serviceData) {
     return serviceData?.map(
       (key, value) => MapEntry(key, base64Decode(value)),
     );
   }
 
-  static Uint8List _decodeBase64OrNull(String base64Value) {
-    if (base64Value != null)
+  static Uint8List? _decodeBase64OrNull(String? base64Value) {
+    if (base64Value != null) {
       return base64.decode(base64Value);
-    else
+    } else {
       return null;
+    }
   }
 
-  static List<String> _mapToListOfStringsOrNull(List<dynamic> values) =>
-      values?.cast();
+  static List<String>? _mapToListOfStringsOrNull(List<dynamic>? values) =>
+      values?.cast<String>();
 }

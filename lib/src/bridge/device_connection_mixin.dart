@@ -5,22 +5,44 @@ mixin DeviceConnectionMixin on FlutterBLE {
       const EventChannel(ChannelName.connectionStateChangeEvents)
           .receiveBroadcastStream();
 
-  Future<void> connectToPeripheral(String deviceIdentifier, bool isAutoConnect,
-      int requestMtu, bool refreshGatt, Duration timeout) async {
-    return await _methodChannel
-        .invokeMethod(MethodName.connectToDevice, <String, dynamic>{
-      ArgumentName.deviceIdentifier: deviceIdentifier,
-      ArgumentName.isAutoConnect: isAutoConnect,
-      ArgumentName.requestMtu: requestMtu,
-      ArgumentName.refreshGatt: refreshGatt,
-      ArgumentName.timeoutMillis: timeout?.inMilliseconds
-    }).catchError((errorJson) =>
-            Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
+  Future<void> connectToPeripheral(
+    String deviceIdentifier, 
+    bool isAutoConnect,
+    int requestMtu, 
+    bool refreshGatt,
+    Duration? timeout
+  ) async {
+    return await _methodChannel.invokeMethod(
+      MethodName.connectToDevice,
+      <String, dynamic>{
+        ArgumentName.deviceIdentifier: deviceIdentifier,
+        ArgumentName.isAutoConnect: isAutoConnect,
+        ArgumentName.requestMtu: requestMtu,
+        ArgumentName.refreshGatt: refreshGatt,
+        ArgumentName.timeoutMillis: timeout?.inMilliseconds
+      },
+    ).catchError(
+      (errorJson) => Future.error(
+        BleError.fromJson(jsonDecode(errorJson.details)),
+      ),
+    );
   }
 
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
-      String identifier, bool emitCurrentValue) async* {
-    yield* _peripheralConnectionStateChanges
+      String identifier, bool emitCurrentValue) {
+    final controller = StreamController<PeripheralConnectionState>(
+      onListen: () => _methodChannel.invokeMethod(
+        MethodName.observeConnectionState,
+        <String, dynamic>{
+          ArgumentName.deviceIdentifier: identifier,
+          ArgumentName.emitCurrentValue: emitCurrentValue,
+        },
+      ).catchError(
+        (errorJson) => throw BleError.fromJson(jsonDecode(errorJson.details)),
+      ),
+    );
+
+    final sourceStream = _peripheralConnectionStateChanges
         .map((jsonString) =>
             ConnectionStateContainer.fromJson(jsonDecode(jsonString)))
         .where((connectionStateContainer) =>
@@ -39,24 +61,35 @@ mixin DeviceConnectionMixin on FlutterBLE {
           return PeripheralConnectionState.disconnecting;
         default:
           throw FormatException(
-              "Unrecognized value of device connection state. Value: $connectionStateString");
+            'Unrecognized value of device connection state. Value: $connectionStateString',
+          );
       }
     });
 
-    _methodChannel.invokeMethod(
-        MethodName.observeConnectionState, <String, dynamic>{
-      ArgumentName.deviceIdentifier: identifier,
-      ArgumentName.emitCurrentValue: emitCurrentValue,
-    }).catchError(
-        (errorJson) => throw BleError.fromJson(jsonDecode(errorJson.details)));
+    controller
+        .addStream(
+          sourceStream,
+          cancelOnError: true,
+        )
+        .then((value) => controller.close());
+
+    return controller.stream;
   }
 
   Future<bool> isPeripheralConnected(String peripheralIdentifier) async {
     return await _methodChannel
         .invokeMethod(MethodName.isDeviceConnected, <String, dynamic>{
       ArgumentName.deviceIdentifier: peripheralIdentifier,
-    }).catchError((errorJson) =>
-            Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
+    }).catchError(
+      (errorJson) {
+        if (errorJson is MissingPluginException) {
+          return Future.error(errorJson);
+        }
+        return Future.error(
+          BleError.fromJson(jsonDecode(errorJson.details))
+        );
+      }
+    );
   }
 
   Future<void> disconnectOrCancelPeripheralConnection(
@@ -64,7 +97,10 @@ mixin DeviceConnectionMixin on FlutterBLE {
     return await _methodChannel
         .invokeMethod(MethodName.cancelConnection, <String, dynamic>{
       ArgumentName.deviceIdentifier: peripheralIdentifier,
-    }).catchError((errorJson) =>
-            Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
+    }).catchError(
+      (errorJson) => Future.error(
+        BleError.fromJson(jsonDecode(errorJson.details)),
+      ),
+    );
   }
 }

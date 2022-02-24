@@ -1,3 +1,4 @@
+extern NSString * const METHOD_NAME_IS_CLIENT_CREATED;
 extern NSString * const METHOD_NAME_CREATE_CLIENT;
 extern NSString * const METHOD_NAME_DESTROY_CLIENT;
 

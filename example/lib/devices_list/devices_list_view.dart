@@ -17,8 +17,8 @@ class DevicesListScreen extends StatefulWidget {
 }
 
 class DeviceListScreenState extends State<DevicesListScreen> {
-  DevicesBloc _devicesBloc;
-  StreamSubscription _appStateSubscription;
+  DevicesBloc? _devicesBloc;
+  StreamSubscription<BleDevice>? _appStateSubscription;
   bool _shouldRunOnResume = true;
 
   @override
@@ -29,14 +29,19 @@ class DeviceListScreenState extends State<DevicesListScreen> {
 
   void _onPause() {
     Fimber.d("onPause");
-    _appStateSubscription.cancel();
-    _devicesBloc.dispose();
+    _appStateSubscription?.cancel();
+    _devicesBloc?.dispose();
   }
 
   void _onResume() {
     Fimber.d("onResume");
-    _devicesBloc.init();
-    _appStateSubscription = _devicesBloc.pickedDevice.listen((bleDevice) async {
+    final devicesBloc = _devicesBloc;
+    if (devicesBloc == null) {
+      Fimber.d("onResume:: no devicesBloc present");
+      return;
+    }
+    devicesBloc.init();
+    _appStateSubscription = devicesBloc.pickedDevice.listen((bleDevice) async {
       Fimber.d("navigate to details");
       _onPause();
       await Navigator.pushNamed(context, "/details");
@@ -67,16 +72,20 @@ class DeviceListScreenState extends State<DevicesListScreen> {
       _shouldRunOnResume = false;
       _onResume();
     }
+    final devicesBloc = _devicesBloc;
+    if (devicesBloc == null) {
+      throw Exception();
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('Bluetooth devices'),
       ),
       body: StreamBuilder<List<BleDevice>>(
-        initialData: _devicesBloc.visibleDevices.value,
-        stream: _devicesBloc.visibleDevices,
+        initialData: devicesBloc.visibleDevices.valueWrapper?.value ?? <BleDevice>[],
+        stream: devicesBloc.visibleDevices,
         builder: (context, snapshot) => RefreshIndicator(
-          onRefresh: _devicesBloc.refresh,
-          child: DevicesList(_devicesBloc, snapshot.data),
+          onRefresh: devicesBloc.refresh ,
+          child: DevicesList(devicesBloc, snapshot.data),
         ),
       ),
     );
@@ -103,17 +112,17 @@ class DeviceListScreenState extends State<DevicesListScreen> {
 }
 
 class DevicesList extends ListView {
-  DevicesList(DevicesBloc devicesBloc, List<BleDevice> devices)
+  DevicesList(DevicesBloc devicesBloc, List<BleDevice>? devices)
       : super.separated(
             separatorBuilder: (context, index) => Divider(
                   color: Colors.grey[300],
                   height: 0,
                   indent: 0,
                 ),
-            itemCount: devices.length,
+            itemCount: devices?.length ?? 0,
             itemBuilder: (context, i) {
               Fimber.d("Build row for $i");
-              return _buildRow(context, devices[i],
+              return _buildRow(context, devices![i],
                   _createTapListener(devicesBloc, devices[i]));
             });
 

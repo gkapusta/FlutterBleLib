@@ -49,6 +49,19 @@ Add [Privacy - Bluetooth Always Usage Description](https://developer.apple.com/d
 ...
 ```
 
+#### Background mode
+
+To support background capabilities add [The `bluetooth-central` Background Execution Mode](https://developer.apple.com/library/archive/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html#//apple_ref/doc/uid/TP40013257-CH7-SW6) key to `[project]/ios/Runner/Info.plist` file.
+
+```xml
+...
+<key>UIBackgroundModes</key>
+<array>
+  <string>bluetooth-central</string>
+</array>
+...
+```
+
 ## Usage
 
 The library is organised around a few base entities, which are:
@@ -121,6 +134,16 @@ The snippet above starts peripheral scan and stops it after receiving first resu
 It filters the scan results to those that advertise a service with specified UUID.
 
 **NOTE:** `isConnectable` and `overflowServiceUuids` fields of `ScanResult` are iOS-only and remain `null` on Android.
+
+
+### Connecting to saved peripheral
+
+You can try to connect to a peripheral with known ID, be it previously scanned UUID on iOS or a MAC address on Android, and avoid the whole scanning operation in your application. To do so, you need to create an instance of `Peripheral` using:
+```dart
+Peripheral myPeripheral = bleManager.createUnsafePeripheral("< known id >");
+```
+Once you have the instance of the peripheral, you may proceed with the connection. But keep in mind 
+that [Android may still not find the peripheral without scanning it first](https://stackoverflow.com/questions/43476369/android-save-ble-device-to-reconnect-after-app-close/43482099#43482099).
 
 ### Connecting to peripheral
 
