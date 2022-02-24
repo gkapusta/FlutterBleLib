@@ -36,5 +36,5 @@ android {
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'com.github.Polidea:MultiPlatformBleAdapter:0.1.8'
+    implementation 'com.github.dotintent:MultiPlatformBleAdapter:0.1.8'
 }
