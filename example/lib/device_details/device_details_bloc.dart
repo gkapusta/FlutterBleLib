@@ -7,9 +7,6 @@ import 'package:flutter_ble_lib_example/repository/device_repository.dart';
 import 'package:flutter_ble_lib_example/test_scenarios/test_scenarios.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../model/ble_device.dart';
-import '../repository/device_repository.dart';
-
 class DeviceDetailsBloc {
   final BleManager _bleManager;
   final DeviceRepository _deviceRepository;
@@ -25,7 +22,7 @@ class DeviceDetailsBloc {
 
   Stream<List<DebugLog>> get logs => _logsController.stream;
 
-  Stream<Null?> get disconnectedDevice => _deviceRepository.pickedDevice
+  Stream<Null> get disconnectedDevice => _deviceRepository.pickedDevice
       .skipWhile((bleDevice) => bleDevice != null).cast<Null>();
 
   List<DebugLog> _logs = [];

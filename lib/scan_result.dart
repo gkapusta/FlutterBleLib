@@ -38,7 +38,7 @@ class ScanResult {
 
 
   factory ScanResult.fromJson(
-    Map<String, dynamic?> json, 
+    Map<String, dynamic> json,
     ManagerForPeripheral manager
   ) {
     assert(json[_ScanResultMetadata.rssi] is int);

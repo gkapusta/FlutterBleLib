@@ -142,7 +142,7 @@ class DevicesList extends ListView {
               padding: const EdgeInsets.all(8.0),
               child: Image.asset('assets/ti_logo.png'),
             ),
-            backgroundColor: Theme.of(context).accentColor);
+            backgroundColor: Theme.of(context).colorScheme.secondary);
       case DeviceCategory.hex:
         return CircleAvatar(
             child: CustomPaint(painter: HexPainter(), size: Size(20, 24)),

@@ -312,9 +312,6 @@ mixin CharacteristicsMixin on FlutterBLE {
   }
 
   void _throwErrorIfMatchesWithTransactionId(PlatformException errorJson, String transactionId) {
-    if (errorJson is PlatformException == false) {
-      return;
-    }
     final errorDetails = jsonDecode(errorJson.details);
     if (transactionId != errorDetails["transactionId"]) {
       return;
