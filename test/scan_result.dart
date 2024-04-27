@@ -4,9 +4,11 @@ import 'dart:typed_data';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'src/bridge/lib_core_test.mocks.dart';
+
 void main() {
   group("Test manufacturer data deserialization:", () {
-    void testManufacturerDataDeserialization(Uint8List manufacturerData) {
+    void testManufacturerDataDeserialization(Uint8List? manufacturerData) {
       test("$manufacturerData is deserialized correctly", () {
         //given
         String serializedScanResult =
@@ -14,7 +16,7 @@ void main() {
 
         //when
         ScanResult scanResult =
-            ScanResult.fromJson(jsonDecode(serializedScanResult), null);
+            ScanResult.fromJson(jsonDecode(serializedScanResult), MockInternalBleManager());
 
         //then
         expect(scanResult.advertisementData.manufacturerData,
@@ -28,7 +30,7 @@ void main() {
   });
 
   group("Test service data deserialization", () {
-    void testServiceDataDeserialization(Map<String, Uint8List> serviceData) {
+    void testServiceDataDeserialization(Map<String, Uint8List>? serviceData) {
       test("$serviceData is deserialized correctly", () {
         //given
         String serializedScanResult =
@@ -36,7 +38,7 @@ void main() {
 
         //when
         ScanResult scanResult =
-            ScanResult.fromJson(jsonDecode(serializedScanResult), null);
+            ScanResult.fromJson(jsonDecode(serializedScanResult), MockInternalBleManager());
 
         //then
         expect(scanResult.advertisementData.serviceData, equals(serviceData));
@@ -58,13 +60,13 @@ String _createJsonScanResult({
   String name = "Valid name",
   int rssi = -60,
   bool isConnectable = true,
-  List<String> overflowServiceUuids,
-  Uint8List manufacturerData,
-  Map<String, Uint8List> serviceData,
-  List<String> serviceUuids,
-  String localName,
-  int txPowerLevel,
-  List<String> solicitedServiceUuids,
+  List<String>? overflowServiceUuids,
+  Uint8List? manufacturerData,
+  Map<String, Uint8List>? serviceData,
+  List<String>? serviceUuids,
+  String? localName,
+  int? txPowerLevel,
+  List<String>? solicitedServiceUuids,
 }) {
   String serializedManufacturerData;
   if (manufacturerData != null) {
@@ -87,7 +89,7 @@ String _createJsonScanResult({
       "\"solicitedServiceUuids\": ${_jsonizeList(solicitedServiceUuids)}}";
 }
 
-String _jsonizeList(List<String> list) {
+String _jsonizeList(List<String>? list) {
   if (list == null) {
     return "null";
   } else {
@@ -103,7 +105,7 @@ String _jsonizeList(List<String> list) {
   }
 }
 
-String _jsonizeMap(Map<String, Uint8List> map) {
+String _jsonizeMap(Map<String, Uint8List>? map) {
   if (map == null) {
     return "null";
   } else {

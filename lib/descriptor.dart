@@ -13,10 +13,9 @@ class Descriptor extends InternalDescriptor {
 
   Descriptor.fromJson(
     Map<String, dynamic> jsonObject,
-    Characteristic characteristic,
+    this.characteristic,
     ManagerForDescriptor manager,
   ) : _manager = manager,
-      characteristic = characteristic,
       uuid = jsonObject[_DescriptorMetadata.uuid],
       super(jsonObject[_DescriptorMetadata.id]);
 

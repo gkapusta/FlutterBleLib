@@ -1,8 +1,7 @@
 import 'dart:async';
-@Timeout(const Duration(milliseconds: 500))
 import 'dart:convert';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/src/_internal.dart';
@@ -16,7 +15,7 @@ import '../../json/ble_error_jsons.dart';
 
 const flutterBleLibMethodChannelName = 'flutter_ble_lib';
 const monitorCharacteristicEventChannelName =
-    flutterBleLibMethodChannelName + '/monitorCharacteristic';
+    '$flutterBleLibMethodChannelName/monitorCharacteristic';
 const mockServiceUuid = "A0C8AAC8-2C37-4CE4-9110-EA7E09704D54";
 const mockCharacteristicUuid = "A56CCE6A-2178-4710-81CA-7895309A1350";
 const mockCharacteristicId = 44;
@@ -29,9 +28,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late FlutterBleLib bleLib;
   final peripheral = MockPeripheral();
-  MethodChannel methodChannel = MethodChannel(flutterBleLibMethodChannelName);
+  MethodChannel methodChannel = const MethodChannel(flutterBleLibMethodChannelName);
   MethodChannel eventMethodChannel =
-      MethodChannel(monitorCharacteristicEventChannelName);
+      const MethodChannel(monitorCharacteristicEventChannelName);
 
   setUp(() {
     bleLib = FlutterBleLib(MockInternalBleManager());
@@ -44,11 +43,8 @@ void main() {
     });
   });
 
-  Future<void> _emitPlatformError(String errorJson) async {
+  Future<void> emitPlatformError(String errorJson) async {
     final serBinding = ServicesBinding.instance;
-    if (serBinding == null) {
-      return;
-    }
     await serBinding.defaultBinaryMessenger.handlePlatformMessage(
       monitorCharacteristicEventChannelName,
       const StandardMethodCodec().encodeErrorEnvelope(
@@ -56,16 +52,13 @@ void main() {
         details: errorJson
       ),
       (data) {
-        print(data);
+        debugPrint(data?.toString());
       }
     );
   }
 
-  Future<void> _emitMonitoringEvent(String eventJson) async {
+  Future<void> emitMonitoringEvent(String eventJson) async {
     final serBinding = ServicesBinding.instance;
-    if (serBinding == null) {
-      return;
-    }
     await serBinding.defaultBinaryMessenger.handlePlatformMessage(
       monitorCharacteristicEventChannelName,
       const StandardMethodCodec().encodeSuccessEnvelope(eventJson),
@@ -73,11 +66,8 @@ void main() {
     );
   }
 
-  Future<void> _emitStreamCompletion() async {
+  Future<void> emitStreamCompletion() async {
     final serBinding = ServicesBinding.instance;
-    if (serBinding == null) {
-      return;
-    }
     await serBinding.defaultBinaryMessenger.handlePlatformMessage(
       monitorCharacteristicEventChannelName,
       null,
@@ -132,7 +122,7 @@ void main() {
   }
 
   test('monitorCharacteristicForIdentifier cancels on stream error', () async {
-    final mockTransId = "asdasd";
+    const mockTransId = "asdasd";
 
     final fut = expectLater(
       bleLib.monitorCharacteristicForIdentifier(peripheral, 123, mockTransId),
@@ -141,7 +131,7 @@ void main() {
         emitsDone,
       ])
     );
-    await _emitPlatformError(cancellationErrorJson(mockTransId));
+    await emitPlatformError(cancellationErrorJson(mockTransId));
 
     await fut;
   });
@@ -159,7 +149,7 @@ void main() {
           emitsError(isInstanceOf<BleError>()),
           emitsDone,
         ]));
-    await _emitPlatformError(cancellationErrorJson(mockTransId));
+    await emitPlatformError(cancellationErrorJson(mockTransId));
     await fut;
   });
 
@@ -172,7 +162,7 @@ void main() {
           emitsError(isInstanceOf<BleError>()),
           emitsDone,
         ]));
-    await _emitPlatformError(cancellationErrorJson(mockTransId));
+    await emitPlatformError(cancellationErrorJson(mockTransId));
     await fut;
   });
 
@@ -191,7 +181,7 @@ void main() {
       ])
     );
 
-    await _emitMonitoringEvent(
+    await emitMonitoringEvent(
       jsonEncode(
         createRawCharacteristic(
           mockIds: true,
@@ -201,7 +191,7 @@ void main() {
         )
       )
     ); //[1,0,0,0]
-    await _emitMonitoringEvent(
+    await emitMonitoringEvent(
       jsonEncode(
         createRawCharacteristic(
           mockIds: true,
@@ -211,7 +201,7 @@ void main() {
         )
       )
     ); //[0,1,0,0]
-    await _emitMonitoringEvent(
+    await emitMonitoringEvent(
       jsonEncode(
         createRawCharacteristic(
           mockIds: true,
@@ -221,7 +211,7 @@ void main() {
         )
       )
     ); //[0,0,1,0]
-    await _emitMonitoringEvent(
+    await emitMonitoringEvent(
       jsonEncode(
         createRawCharacteristic(
           mockIds: true,
@@ -231,7 +221,7 @@ void main() {
         )
       )
     ); //[0,0,0,1]
-    await _emitStreamCompletion();
+    await emitStreamCompletion();
     await fut;
   });
 
@@ -294,11 +284,11 @@ void main() {
     expect(expected, isNot(equals(invalid2)));
     expect(expected, isNot(equals(invalid3)));
 
-    await _emitMonitoringEvent(jsonEncode(valid));
-    await _emitMonitoringEvent(jsonEncode(invalid1));
-    await _emitMonitoringEvent(jsonEncode(invalid2));
-    await _emitMonitoringEvent(jsonEncode(invalid3));
-    await _emitStreamCompletion();
+    await emitMonitoringEvent(jsonEncode(valid));
+    await emitMonitoringEvent(jsonEncode(invalid1));
+    await emitMonitoringEvent(jsonEncode(invalid2));
+    await emitMonitoringEvent(jsonEncode(invalid3));
+    await emitStreamCompletion();
     await fut;
   });
 
@@ -319,25 +309,25 @@ void main() {
           emitsDone
         ]));
 
-    await _emitMonitoringEvent(jsonEncode(createRawCharacteristic(
+    await emitMonitoringEvent(jsonEncode(createRawCharacteristic(
         mockIds: true,
         serviceId: 1,
         characteristicUuid: "characteristicUuid",
         transactionId: "1")));
-    await _emitMonitoringEvent(jsonEncode(createRawCharacteristic(
+    await emitMonitoringEvent(jsonEncode(createRawCharacteristic(
         mockIds: true,
         serviceId: 1, characteristicUuid: "fakeUuid", transactionId: "1")));
-    await _emitMonitoringEvent(jsonEncode(createRawCharacteristic(
+    await emitMonitoringEvent(jsonEncode(createRawCharacteristic(
         mockIds: true,
         serviceId: 2,
         characteristicUuid: "characteristicUuid",
         transactionId: "1")));
-    await _emitMonitoringEvent(jsonEncode(createRawCharacteristic(
+    await emitMonitoringEvent(jsonEncode(createRawCharacteristic(
         mockIds: true,
         serviceId: 1,
         characteristicUuid: "characteristicUuid",
         transactionId: "2")));
-    await _emitStreamCompletion();
+    await emitStreamCompletion();
     await fut;
   });
 

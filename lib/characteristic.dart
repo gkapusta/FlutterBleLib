@@ -40,10 +40,9 @@ class Characteristic extends InternalCharacteristic {
   /// True if this characteristic can be monitored via indications.
   bool isIndicatable;
 
-  Characteristic.fromJson(Map<String, dynamic> jsonObject, Service service,
+  Characteristic.fromJson(Map<String, dynamic> jsonObject, this.service,
       ManagerForCharacteristic manager)
       : _manager = manager,
-        service = service,
         uuid = jsonObject[_CharacteristicMetadata.uuid],
         isReadable = jsonObject[_CharacteristicMetadata.isReadable],
         isWritableWithResponse =
@@ -188,11 +187,10 @@ class CharacteristicWithValue extends Characteristic {
   }
 
   @override
-  int get hashCode => super.hashCode;
+  int get hashCode => Object.hash(super.hashCode, value.toString());
 
   @override
   String toString() {
-    return super.toString() +
-        ' CharacteristicWithValue{value = ${value.toString()}';
+    return '${super.toString()} CharacteristicWithValue{value = ${value.toString()}';
   }
 }

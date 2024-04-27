@@ -163,13 +163,15 @@ mixin CharacteristicsMixin on FlutterBLE {
     int characteristicIdentifier,
     String transactionId,
   ) {
-    void Function() startMonitoring = () => _methodChannel.invokeMethod(
-          MethodName.monitorCharacteristicForIdentifier,
-          <String, dynamic>{
-            ArgumentName.characteristicIdentifier: characteristicIdentifier,
-            ArgumentName.transactionId: transactionId,
-          },
-        );
+    void startMonitoring() {
+      _methodChannel.invokeMethod(
+        MethodName.monitorCharacteristicForIdentifier,
+        <String, dynamic>{
+          ArgumentName.characteristicIdentifier: characteristicIdentifier,
+          ArgumentName.transactionId: transactionId,
+        },
+      );
+    }
 
     bool characteristicFilter(
       CharacteristicWithValueAndTransactionId characteristic,
@@ -181,7 +183,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         transactionId,
         characteristic._transactionId ?? "",
       );
-    };
+    }
 
     return _createMonitoringStream(
       startMonitoring,
@@ -197,22 +199,24 @@ mixin CharacteristicsMixin on FlutterBLE {
     String characteristicUuid,
     String transactionId,
   ) {
-    void Function() startMonitoring = () => _methodChannel.invokeMethod(
-          MethodName.monitorCharacteristicForDevice,
-          <String, dynamic>{
-            ArgumentName.deviceIdentifier: peripheral.identifier,
-            ArgumentName.serviceUuid: serviceUuid,
-            ArgumentName.characteristicUuid: characteristicUuid,
-            ArgumentName.transactionId: transactionId,
-          },
-        );
+    void startMonitoring() {
+      _methodChannel.invokeMethod(
+        MethodName.monitorCharacteristicForDevice,
+        <String, dynamic>{
+          ArgumentName.deviceIdentifier: peripheral.identifier,
+          ArgumentName.serviceUuid: serviceUuid,
+          ArgumentName.characteristicUuid: characteristicUuid,
+          ArgumentName.transactionId: transactionId,
+        },
+      );
+    }
 
-    bool Function(CharacteristicWithValueAndTransactionId)
-        characteristicsFilter = (characteristic) =>
-            equalsIgnoreAsciiCase(characteristicUuid, characteristic.uuid) &&
-            equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid) &&
-            equalsIgnoreAsciiCase(
-                transactionId, characteristic._transactionId ?? "");
+    bool characteristicsFilter(CharacteristicWithValueAndTransactionId characteristic) {
+      return equalsIgnoreAsciiCase(characteristicUuid, characteristic.uuid) &&
+          equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid) &&
+          equalsIgnoreAsciiCase(
+              transactionId, characteristic._transactionId ?? "");
+    }
 
     return _createMonitoringStream(
       startMonitoring,
@@ -228,21 +232,23 @@ mixin CharacteristicsMixin on FlutterBLE {
     String characteristicUuid,
     String transactionId,
   ) {
-    void Function() startMonitoring = () => _methodChannel.invokeMethod(
-          MethodName.monitorCharacteristicForService,
-          <String, dynamic>{
-            ArgumentName.serviceIdentifier: serviceIdentifier,
-            ArgumentName.characteristicUuid: characteristicUuid,
-            ArgumentName.transactionId: transactionId,
-          },
-        );
+    void startMonitoring() {
+      _methodChannel.invokeMethod(
+        MethodName.monitorCharacteristicForService,
+        <String, dynamic>{
+          ArgumentName.serviceIdentifier: serviceIdentifier,
+          ArgumentName.characteristicUuid: characteristicUuid,
+          ArgumentName.transactionId: transactionId,
+        },
+      );
+    }
 
-    bool Function(CharacteristicWithValueAndTransactionId)
-        characteristicFilter = (characteristic) =>
-            equalsIgnoreAsciiCase(characteristicUuid, characteristic.uuid) &&
-            serviceIdentifier == characteristic.service._id &&
-            equalsIgnoreAsciiCase(
-                transactionId, characteristic._transactionId ?? "");
+    bool characteristicFilter(CharacteristicWithValueAndTransactionId characteristic) {
+      return equalsIgnoreAsciiCase(characteristicUuid, characteristic.uuid) &&
+          serviceIdentifier == characteristic.service._id &&
+          equalsIgnoreAsciiCase(
+              transactionId, characteristic._transactionId ?? "");
+    }
 
     return _createMonitoringStream(
       startMonitoring,
@@ -348,6 +354,5 @@ class CharacteristicWithValueAndTransactionId extends CharacteristicWithValue {
 
   @override
   String toString() =>
-      super.toString() +
-      ' CharacteristicWithValueAndTransactionId{transactionId: $_transactionId}';
+      '${super.toString()} CharacteristicWithValueAndTransactionId{transactionId: $_transactionId}';
 }
