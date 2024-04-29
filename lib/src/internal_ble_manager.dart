@@ -1,4 +1,4 @@
-part of _internal;
+part of '_internal.dart';
 
 class InternalBleManager
     implements
@@ -8,7 +8,7 @@ class InternalBleManager
         ManagerForCharacteristic,
         ManagerForDescriptor {
   late FlutterBleLib _bleLib;
-  
+
   InternalBleManager() {
     _bleLib = FlutterBleLib(this);
   }
@@ -179,13 +179,12 @@ class InternalBleManager
     Peripheral peripheral,
     String transactionId,
   ) {
-    print("call channel read RSSI");
+    debugPrint("call channel read RSSI");
     return _bleLib.rssi(peripheral, transactionId);
   }
 
   @override
-  Future<int> requestMtu(
-      Peripheral peripheral, int mtu, String transactionId) {
+  Future<int> requestMtu(Peripheral peripheral, int mtu, String transactionId) {
     return _bleLib.requestMtu(peripheral, mtu, transactionId);
   }
 

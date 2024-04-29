@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
@@ -16,7 +15,7 @@ import 'test_util/descriptor_generator.dart';
 @GenerateMocks(
   [Peripheral, ManagerForDescriptor, DescriptorWithValue],
   customMocks: [
-    MockSpec<Service>(returnNullOnMissingStub: true),
+    MockSpec<Service>(onMissingStub: OnMissingStub.returnDefault),
   ]
 )
 void main() {

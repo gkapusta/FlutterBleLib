@@ -1,4 +1,4 @@
-part of flutter_ble_lib;
+part of 'flutter_ble_lib.dart';
 
 abstract class _DescriptorMetadata {
   static const String uuid = 'descriptorUuid';
@@ -13,12 +13,11 @@ class Descriptor extends InternalDescriptor {
 
   Descriptor.fromJson(
     Map<String, dynamic> jsonObject,
-    Characteristic characteristic,
+    this.characteristic,
     ManagerForDescriptor manager,
-  ) : _manager = manager,
-      characteristic = characteristic,
-      uuid = jsonObject[_DescriptorMetadata.uuid],
-      super(jsonObject[_DescriptorMetadata.id]);
+  )   : _manager = manager,
+        uuid = jsonObject[_DescriptorMetadata.uuid],
+        super(jsonObject[_DescriptorMetadata.id]);
 
   Future<Uint8List> read({String? transactionId}) =>
       _manager.readDescriptorForIdentifier(
@@ -54,6 +53,6 @@ class DescriptorWithValue extends Descriptor {
     Map<String, dynamic> jsonObject,
     Characteristic characteristic,
     ManagerForDescriptor manager,
-  ) : value = base64Decode(jsonObject[_DescriptorMetadata.value]),
-      super.fromJson(jsonObject, characteristic, manager);
+  )   : value = base64Decode(jsonObject[_DescriptorMetadata.value]),
+        super.fromJson(jsonObject, characteristic, manager);
 }

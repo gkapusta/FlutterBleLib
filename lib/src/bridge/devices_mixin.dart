@@ -1,4 +1,4 @@
-part of _internal;
+part of '../_internal.dart';
 
 mixin DevicesMixin on FlutterBLE {
   Future<List<Peripheral>> knownDevices(
@@ -7,7 +7,7 @@ mixin DevicesMixin on FlutterBLE {
         .invokeMethod(MethodName.knownDevices, <String, dynamic>{
       ArgumentName.deviceIdentifiers: peripheralIdentifiers,
     }).then((peripheralsJson) {
-      print("known devices json: $peripheralsJson");
+      debugPrint("known devices json: $peripheralsJson");
       return _parsePeripheralsJson(peripheralsJson);
     });
   }
@@ -17,7 +17,7 @@ mixin DevicesMixin on FlutterBLE {
         .invokeMethod(MethodName.connectedDevices, <String, dynamic>{
       ArgumentName.uuids: serviceUuids,
     }).then((peripheralsJson) {
-      print("connected devices json: $peripheralsJson");
+      debugPrint("connected devices json: $peripheralsJson");
       return _parsePeripheralsJson(peripheralsJson);
     });
   }

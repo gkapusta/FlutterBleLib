@@ -1,20 +1,59 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
 .DS_Store
 .atom/
-.idea
+.buildlog/
+.history
+.svn/
+.gradle/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
 .packages
+.pub-cache/
 .pub/
+/build/
+*.g.dart
+
+# Web related
+lib/generated_plugin_registrant.dart
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Exceptions to above rules.
+!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+/ios/Flutter/.last_build_id
+/ios/build/
+
+
+# FVM Version Cache
+.fvm/
+
+# Previously included from original FlutterBleLib
 build/
 ios/.generated/
 packages
-pubspec.lock
-*.iml
 example/android/res/values/strings_en.arb
 res/values/strings_en.arb
 lib/generated/
 example/lib/generated/
 example/.flutter-plugins-dependencies
-.dart_tool/
-example/ios/Podfile.lock
 .vscode/settings.json
 org.eclipse.buildship.core.prefs
 .project

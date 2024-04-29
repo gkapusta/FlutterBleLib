@@ -1,12 +1,12 @@
-part of _internal;
+part of '../_internal.dart';
 
 mixin LogLevelMixin on FlutterBLE {
   Future<void> setLogLevel(LogLevel logLevel) async {
-    print("set log level to ${describeEnum(logLevel)}");
+    debugPrint("set log level to ${logLevel.name}");
     return await _methodChannel.invokeMethod(
       MethodName.setLogLevel,
       <String, dynamic>{
-        ArgumentName.logLevel: describeEnum(logLevel),
+        ArgumentName.logLevel: logLevel.name,
       },
     ).catchError((errorJson) =>
         Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
@@ -19,8 +19,8 @@ mixin LogLevelMixin on FlutterBLE {
   }
 
   LogLevel _logLevelFromString(String logLevelName) {
-    print("try to get log level from: $logLevelName");
+    debugPrint("try to get log level from: $logLevelName");
     return LogLevel.values.firstWhere(
-        (e) => e.toString() == 'LogLevel.' + logLevelName.toLowerCase());
+        (e) => e.toString() == 'LogLevel.${logLevelName.toLowerCase()}');
   }
 }

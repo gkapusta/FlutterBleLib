@@ -1,4 +1,4 @@
-part of flutter_ble_lib;
+part of 'flutter_ble_lib.dart';
 
 abstract class _ScanResultMetadata {
   static const String rssi = "rssi";
@@ -27,28 +27,22 @@ class ScanResult {
 
   /// A packet of data advertised by the peripheral.
   final AdvertisementData advertisementData;
-  
+
   ScanResult._(
-    this.peripheral, 
+    this.peripheral,
     this.rssi,
-    this.advertisementData,
-    {this.isConnectable, 
-    List<String>? overflowServiceUuids, 
+    this.advertisementData, {
+    this.isConnectable,
+    List<String>? overflowServiceUuids,
   }) : overflowServiceUuids = overflowServiceUuids ?? <String>[];
 
-
   factory ScanResult.fromJson(
-    Map<String, dynamic?> json, 
-    ManagerForPeripheral manager
-  ) {
+      Map<String, dynamic> json, ManagerForPeripheral manager) {
     assert(json[_ScanResultMetadata.rssi] is int);
-    return ScanResult._(
-      Peripheral.fromJson(json, manager), 
-      json[_ScanResultMetadata.rssi],
-      AdvertisementData._fromJson(json),
-      isConnectable: json[_ScanResultMetadata.isConnectable],
-      overflowServiceUuids: json[_ScanResultMetadata.overflowServiceUuids]
-    );
+    return ScanResult._(Peripheral.fromJson(json, manager),
+        json[_ScanResultMetadata.rssi], AdvertisementData._fromJson(json),
+        isConnectable: json[_ScanResultMetadata.isConnectable],
+        overflowServiceUuids: json[_ScanResultMetadata.overflowServiceUuids]);
   }
 }
 
@@ -83,10 +77,8 @@ class AdvertisementData {
             _mapToListOfStringsOrNull(json[_ScanResultMetadata.serviceUuids]),
         localName = json[_ScanResultMetadata.localName],
         txPowerLevel = json[_ScanResultMetadata.txPowerLevel],
-        solicitedServiceUuids =
-          _mapToListOfStringsOrNull(
-            json[_ScanResultMetadata.solicitedServiceUuids]
-          );
+        solicitedServiceUuids = _mapToListOfStringsOrNull(
+            json[_ScanResultMetadata.solicitedServiceUuids]);
 
   static Map<String, Uint8List>? _getServiceDataOrNull(
       Map<String, dynamic>? serviceData) {
