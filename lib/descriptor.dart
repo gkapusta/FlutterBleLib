@@ -15,9 +15,9 @@ class Descriptor extends InternalDescriptor {
     Map<String, dynamic> jsonObject,
     this.characteristic,
     ManagerForDescriptor manager,
-  ) : _manager = manager,
-      uuid = jsonObject[_DescriptorMetadata.uuid],
-      super(jsonObject[_DescriptorMetadata.id]);
+  )   : _manager = manager,
+        uuid = jsonObject[_DescriptorMetadata.uuid],
+        super(jsonObject[_DescriptorMetadata.id]);
 
   Future<Uint8List> read({String? transactionId}) =>
       _manager.readDescriptorForIdentifier(
@@ -53,6 +53,6 @@ class DescriptorWithValue extends Descriptor {
     Map<String, dynamic> jsonObject,
     Characteristic characteristic,
     ManagerForDescriptor manager,
-  ) : value = base64Decode(jsonObject[_DescriptorMetadata.value]),
-      super.fromJson(jsonObject, characteristic, manager);
+  )   : value = base64Decode(jsonObject[_DescriptorMetadata.value]),
+        super.fromJson(jsonObject, characteristic, manager);
 }

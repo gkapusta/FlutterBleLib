@@ -8,7 +8,7 @@ class InternalBleManager
         ManagerForCharacteristic,
         ManagerForDescriptor {
   late FlutterBleLib _bleLib;
-  
+
   InternalBleManager() {
     _bleLib = FlutterBleLib(this);
   }
@@ -184,8 +184,7 @@ class InternalBleManager
   }
 
   @override
-  Future<int> requestMtu(
-      Peripheral peripheral, int mtu, String transactionId) {
+  Future<int> requestMtu(Peripheral peripheral, int mtu, String transactionId) {
     return _bleLib.requestMtu(peripheral, mtu, transactionId);
   }
 

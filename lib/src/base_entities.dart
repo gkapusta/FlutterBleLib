@@ -17,4 +17,3 @@ class InternalDescriptor {
 
   InternalDescriptor(this._id);
 }
-

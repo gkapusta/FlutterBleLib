@@ -33,35 +33,34 @@ class FlutterBleLib extends FlutterBLE
 
   FlutterBleLib(InternalBleManager manager) : super._(manager);
 
-  Future<List<Peripheral>> restoredState() async { 
+  Future<List<Peripheral>> restoredState() async {
     final peripherals = await _restoreStateEvents
-      .map(
-        (jsonString) {
-          if (jsonString == null || 
-              jsonString is String == false) {
-            return null;
-          }
-          final restoredPeripheralsJson =
-              (jsonDecode(jsonString) as List<dynamic>)
-              .cast<Map<String, dynamic>>();
-          return restoredPeripheralsJson
-              .map((peripheralJson) =>
-                  Peripheral.fromJson(peripheralJson, _manager))
-              .toList();
-          
-        },
-      )
-      .take(1)
-      .single;
+        .map(
+          (jsonString) {
+            if (jsonString == null || jsonString is String == false) {
+              return null;
+            }
+            final restoredPeripheralsJson =
+                (jsonDecode(jsonString) as List<dynamic>)
+                    .cast<Map<String, dynamic>>();
+            return restoredPeripheralsJson
+                .map((peripheralJson) =>
+                    Peripheral.fromJson(peripheralJson, _manager))
+                .toList();
+          },
+        )
+        .take(1)
+        .single;
     return peripherals ?? <Peripheral>[];
   }
 
-  Future<bool> isClientCreated() =>
-    _methodChannel.invokeMethod<bool>(MethodName.isClientCreated)
+  Future<bool> isClientCreated() => _methodChannel
+      .invokeMethod<bool>(MethodName.isClientCreated)
       .then((value) => value!);
 
   Future<void> createClient(String? restoreStateIdentifier) async {
-    await _methodChannel.invokeMethod(MethodName.createClient, <String, String?>{
+    await _methodChannel.invokeMethod(
+        MethodName.createClient, <String, String?>{
       ArgumentName.restoreStateIdentifier: restoreStateIdentifier
     });
   }

@@ -76,8 +76,7 @@ abstract class MethodName {
 abstract class ChannelName {
   static const String flutterBleLib = "flutter_ble_lib";
   static const String adapterStateChanges = "$flutterBleLib/stateChanges";
-  static const String stateRestoreEvents =
-      "$flutterBleLib/stateRestoreEvents";
+  static const String stateRestoreEvents = "$flutterBleLib/stateRestoreEvents";
   static const String scanningEvents = "$flutterBleLib/scanningEvents";
   static const String connectionStateChangeEvents =
       "$flutterBleLib/connectionStateChangeEvents";

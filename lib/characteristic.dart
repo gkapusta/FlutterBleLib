@@ -174,8 +174,8 @@ class CharacteristicWithValue extends Characteristic {
     Map<String, dynamic> jsonObject,
     Service service,
     ManagerForCharacteristic manager,
-  ) : value = base64Decode(jsonObject[_CharacteristicMetadata.value]),
-      super.fromJson(jsonObject, service, manager);
+  )   : value = base64Decode(jsonObject[_CharacteristicMetadata.value]),
+        super.fromJson(jsonObject, service, manager);
 
   @override
   bool operator ==(Object other) {

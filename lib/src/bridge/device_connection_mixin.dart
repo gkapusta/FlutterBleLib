@@ -5,13 +5,8 @@ mixin DeviceConnectionMixin on FlutterBLE {
       const EventChannel(ChannelName.connectionStateChangeEvents)
           .receiveBroadcastStream();
 
-  Future<void> connectToPeripheral(
-    String deviceIdentifier, 
-    bool isAutoConnect,
-    int requestMtu, 
-    bool refreshGatt,
-    Duration? timeout
-  ) async {
+  Future<void> connectToPeripheral(String deviceIdentifier, bool isAutoConnect,
+      int requestMtu, bool refreshGatt, Duration? timeout) async {
     return await _methodChannel.invokeMethod(
       MethodName.connectToDevice,
       <String, dynamic>{
@@ -80,16 +75,12 @@ mixin DeviceConnectionMixin on FlutterBLE {
     return await _methodChannel
         .invokeMethod(MethodName.isDeviceConnected, <String, dynamic>{
       ArgumentName.deviceIdentifier: peripheralIdentifier,
-    }).catchError(
-      (errorJson) {
-        if (errorJson is MissingPluginException) {
-          return Future.error(errorJson);
-        }
-        return Future.error(
-          BleError.fromJson(jsonDecode(errorJson.details))
-        );
+    }).catchError((errorJson) {
+      if (errorJson is MissingPluginException) {
+        return Future.error(errorJson);
       }
-    );
+      return Future.error(BleError.fromJson(jsonDecode(errorJson.details)));
+    });
   }
 
   Future<void> disconnectOrCancelPeripheralConnection(
