@@ -1,4 +1,4 @@
-part of _internal;
+part of '../_internal.dart';
 
 mixin BluetoothStateMixin on FlutterBLE {
   final Stream<dynamic> _adapterStateChanges =

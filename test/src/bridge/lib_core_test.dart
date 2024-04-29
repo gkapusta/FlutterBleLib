@@ -35,17 +35,16 @@ void main() {
   setUp(() {
     bleLib = FlutterBleLib(MockInternalBleManager());
     when(peripheral.identifier).thenReturn("4B:99:4C:34:DE:77");
-    methodChannel.setMockMethodCallHandler((call) { 
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(methodChannel, (call) {
       return Future.value("");
     });
-    eventMethodChannel.setMockMethodCallHandler((call) { 
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(eventMethodChannel, (call) {
       return Future.value("");
     });
   });
 
   Future<void> emitPlatformError(String errorJson) async {
-    final serBinding = ServicesBinding.instance;
-    await serBinding.defaultBinaryMessenger.handlePlatformMessage(
+    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
       monitorCharacteristicEventChannelName,
       const StandardMethodCodec().encodeErrorEnvelope(
         code: "irrelevant", 
@@ -58,8 +57,7 @@ void main() {
   }
 
   Future<void> emitMonitoringEvent(String eventJson) async {
-    final serBinding = ServicesBinding.instance;
-    await serBinding.defaultBinaryMessenger.handlePlatformMessage(
+    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
       monitorCharacteristicEventChannelName,
       const StandardMethodCodec().encodeSuccessEnvelope(eventJson),
       (data) {}
@@ -67,8 +65,7 @@ void main() {
   }
 
   Future<void> emitStreamCompletion() async {
-    final serBinding = ServicesBinding.instance;
-    await serBinding.defaultBinaryMessenger.handlePlatformMessage(
+    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
       monitorCharacteristicEventChannelName,
       null,
       (data) {},
@@ -342,7 +339,7 @@ void main() {
       StreamSubscription subscription1 = monitoringStream.listen((_) {});
 
       int calledCount = 0;
-      methodChannel.setMockMethodCallHandler((call) {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(methodChannel, (call) {
         if (call.method == MethodName.cancelTransaction &&
             call.arguments[ArgumentName.transactionId] == "1") {
           calledCount++;
@@ -368,7 +365,7 @@ void main() {
       StreamSubscription subscription = monitoringStream.listen((_) {});
 
       int calledCount = 0;
-      methodChannel.setMockMethodCallHandler((call) {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(methodChannel, (call) {
         if (call.method == MethodName.cancelTransaction &&
             call.arguments[ArgumentName.transactionId] == "1") {
           calledCount++;
@@ -395,7 +392,7 @@ void main() {
       monitoringStream.listen((_) {});
 
       int calledCount = 0;
-      methodChannel.setMockMethodCallHandler((call) {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(methodChannel, (call) {
         if (call.method == MethodName.cancelTransaction &&
             call.arguments[ArgumentName.transactionId] == "1") {
           calledCount++;

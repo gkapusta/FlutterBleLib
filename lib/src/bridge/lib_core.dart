@@ -1,4 +1,4 @@
-part of _internal;
+part of '../_internal.dart';
 
 abstract class FlutterBLE {
   final InternalBleManager _manager;

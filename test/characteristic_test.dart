@@ -15,7 +15,7 @@ import 'test_util/descriptor_generator.dart';
 @GenerateMocks(
   [Peripheral, ManagerForDescriptor, DescriptorWithValue],
   customMocks: [
-    MockSpec<Service>(returnNullOnMissingStub: true),
+    MockSpec<Service>(onMissingStub: OnMissingStub.returnDefault),
   ]
 )
 void main() {

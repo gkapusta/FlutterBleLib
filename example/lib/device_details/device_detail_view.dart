@@ -60,14 +60,12 @@ class DeviceDetailsViewState extends State<DeviceDetailsView> {
   @override
   Widget build(BuildContext context) {
     final deviceDetailsBloc = _deviceDetailsBloc;
-    return WillPopScope(
-      onWillPop: () {
-        if (deviceDetailsBloc == null) {
-          return Future<bool>.value(true);
+    return PopScope(
+      canPop: deviceDetailsBloc == null,
+      onPopInvoked: (didPop) {
+        if (deviceDetailsBloc != null) {
+          deviceDetailsBloc.disconnect();
         }
-        return deviceDetailsBloc.disconnect().then((_) {
-          return false;
-        });
       },
       child: DefaultTabController(
         length: 2,

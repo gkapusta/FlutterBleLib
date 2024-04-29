@@ -1,4 +1,4 @@
-part of flutter_ble_lib;
+part of 'flutter_ble_lib.dart';
 
 /// Callback used to inform about peripherals restored by the system.
 ///

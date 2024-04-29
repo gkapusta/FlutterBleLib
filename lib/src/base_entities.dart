@@ -1,4 +1,4 @@
-part of _internal;
+part of '_internal.dart';
 
 class InternalService {
   final int _id;

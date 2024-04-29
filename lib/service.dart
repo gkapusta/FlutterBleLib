@@ -1,4 +1,4 @@
-part of flutter_ble_lib;
+part of 'flutter_ble_lib.dart';
 
 abstract class _ServiceMetadata {
   static const String uuid = "serviceUuid";
