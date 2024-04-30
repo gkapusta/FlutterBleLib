@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.ChannelName;
 import com.polidea.flutter_ble_lib.constant.MethodName;
@@ -13,8 +15,8 @@ import com.polidea.flutter_ble_lib.delegate.CharacteristicsDelegate;
 import com.polidea.flutter_ble_lib.delegate.DescriptorsDelegate;
 import com.polidea.flutter_ble_lib.delegate.DeviceConnectionDelegate;
 import com.polidea.flutter_ble_lib.delegate.DevicesDelegate;
-import com.polidea.flutter_ble_lib.delegate.LogLevelDelegate;
 import com.polidea.flutter_ble_lib.delegate.DiscoveryDelegate;
+import com.polidea.flutter_ble_lib.delegate.LogLevelDelegate;
 import com.polidea.flutter_ble_lib.delegate.MtuDelegate;
 import com.polidea.flutter_ble_lib.delegate.RssiDelegate;
 import com.polidea.flutter_ble_lib.event.AdapterStateStreamHandler;
@@ -32,7 +34,6 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 import java.util.LinkedList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -42,7 +43,6 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 public class FlutterBleLibPlugin implements MethodCallHandler, FlutterPlugin, ActivityAware {
 
@@ -92,10 +92,6 @@ public class FlutterBleLibPlugin implements MethodCallHandler, FlutterPlugin, Ac
         restoreStateChannel.setStreamHandler(plugin.restoreStateStreamHandler);
         connectionStateChannel.setStreamHandler(plugin.connectionStateStreamHandler);
         characteristicMonitorChannel.setStreamHandler(plugin.characteristicsMonitorStreamHandler);
-    }
-
-    public static void registerWith(Registrar registrar) {
-        init(registrar.context(), registrar.messenger(), registrar.activity());
     }
 
     private void setupAdapter(Context context) {
