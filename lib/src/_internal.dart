@@ -2,6 +2,8 @@ library _internal;
 
 import 'dart:async';
 import 'dart:convert';
+// This is included in foundation in newer flutter versions, but not in olders ones (eg, 2.8.1)
+import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
