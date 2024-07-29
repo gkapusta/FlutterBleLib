@@ -16,7 +16,7 @@ dependencies:
 
 dev_dependencies:
   mockito: ^5.0.3
-  build_runner: ^1.12.2
+  build_runner:
   pedantic: ^1.11.0
 
   flutter_test:
