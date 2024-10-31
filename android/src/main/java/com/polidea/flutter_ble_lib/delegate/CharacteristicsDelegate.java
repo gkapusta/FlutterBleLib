@@ -181,7 +181,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                     @Override
                     public void onSuccess(Characteristic data) {
                         try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data, transactionId)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             result.error(null, e.getMessage(), null);
@@ -493,10 +493,6 @@ public class CharacteristicsDelegate extends CallDelegate {
                     }
                 });
         result.success(null);
-    }
-
-    private SingleCharacteristicResponse createCharacteristicResponse(Characteristic characteristic) {
-        return createCharacteristicResponse(characteristic, null);
     }
 
     private SingleCharacteristicResponse createCharacteristicResponse(Characteristic characteristic, String transactionId) {
